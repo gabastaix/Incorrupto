@@ -4,13 +4,15 @@ class ScreenMap {
   static const home = '/home';
   static const explorer = '/explorer';
   static const details = '/details';
-  static const settings = '/settings';
+  static const sujets = '/sujets';
+  static const profile = '/profile';
 
   static const all = <String>[
     splash,
     home,
     explorer,
     details,
-    settings,
+    sujets,
+    profile,
   ];
 }

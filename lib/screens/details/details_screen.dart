@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import '../../design/figma_contract.dart';
 
 class DetailsScreen extends StatelessWidget {
-  // Optional: pass in data using arguments via Navigator
   final String title;
   final String summary;
-  final List<_Viewpoint> viewpoints;
-  final List<_Source> sources;
+  final List<Viewpoint> viewpoints;
+  final List<ArticleSource> sources;
 
   const DetailsScreen({
     super.key,
@@ -17,194 +16,120 @@ class DetailsScreen extends StatelessWidget {
     required this.sources,
   });
 
-  // A helper factory for a quick demo when navigating without real data.
- factory DetailsScreen.demo({Key? key}) {
+  factory DetailsScreen.demo({Key? key}) {
     return DetailsScreen(
+      key: key,
       title: 'Analyse démonstration : Réforme des retraites',
       summary:
-          "Résumé neutre : Voici les faits essentiels et confirmés publiés par des sources crédibles. "
-          "L’objectif est d’expliquer ce qui s’est passé sans juger.",
+          'Voici les faits essentiels et confirmés publiés par des sources '
+          'crédibles. L\'objectif est d\'expliquer ce qui s\'est passé sans juger.',
       viewpoints: const [
-        _Viewpoint(
-          label: 'La droite',
+        Viewpoint(
+          label: 'Les syndicats',
           summary:
-              'Argument principal: Favorise la compétitivité, propose indexation par points, insiste sur la soutenabilité.',
+              'Farouchement opposés à la réforme, ils mettent en avant la '
+              'pénibilité des métiers et l\'injustice pour les travailleurs '
+              'manuels contraints de travailler deux ans de plus.',
         ),
-        _Viewpoint(
-          label: 'La gauche',
+        Viewpoint(
+          label: 'Le gouvernement',
           summary:
-              'Argument principal: Met l’accent sur la protection sociale et la justice intergénérationnelle.',
+              'Défend la nécessité économique de la réforme face au '
+              'vieillissement démographique, en insistant sur la soutenabilité '
+              'du système de retraites à long terme.',
         ),
-        _Viewpoint(
-          label: 'Les experts',
+        Viewpoint(
+          label: 'Les économistes',
           summary:
-              'Argument principal: Analyse technique sur financement, projections démographiques et alternatives.',
+              'Partagés : certains valident les projections officielles, '
+              'd\'autres proposent des alternatives (taxation du capital, '
+              'retraite à points) et contestent les hypothèses de croissance.',
+        ),
+        Viewpoint(
+          label: 'L\'opinion publique',
+          summary:
+              'Une majorité de Français s\'est déclarée opposée à la réforme '
+              'selon les sondages, avec une mobilisation sociale inédite '
+              'depuis des décennies.',
         ),
       ],
       sources: const [
-        _Source(title: 'Le Monde — article', url: 'https://example.com/article1'),
-        _Source(title: 'Libération — dossier', url: 'https://example.com/article2'),
+        ArticleSource(
+            title: 'Le Monde — article', url: 'https://example.com/article1'),
+        ArticleSource(
+            title: 'Libération — dossier',
+            url: 'https://example.com/article2'),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final bg = FigmaContract.bg;
-    final surface = FigmaContract.surface;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
-    final border = FigmaContract.border;
-
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: FigmaContract.bg,
       appBar: AppBar(
-        backgroundColor: bg,
+        backgroundColor: FigmaContract.bg,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: textPrimary,
+          color: FigmaContract.textPrimary,
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Comprendre le débat',
-          style: FigmaContract.body().copyWith(color: textPrimary, fontWeight: FontWeight.w700),
+          style: FigmaContract.body().copyWith(
+            color: FigmaContract.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 18),
-          child: Column(
-            children: [
-              // Title
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title,
-                  style: FigmaContract.h2().copyWith(color: textPrimary, fontWeight: FontWeight.w700),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Summary card
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(FigmaContract.rMd),
-                  border: Border.all(color: border),
-                  boxShadow: FigmaContract.cardShadow,
-                ),
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Faits & résumé',
-                      style: FigmaContract.caption().copyWith(color: textSecondary, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      summary,
-                      style: FigmaContract.body().copyWith(color: textPrimary, height: 1.45),
-                    ),
-                    const SizedBox(height: 8),
-                    // small source row
-                    Row(
-                      children: [
-                        Icon(Icons.link, size: 16, color: FigmaContract.primary),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Sources vérifiables',
-                          style: FigmaContract.caption().copyWith(color: FigmaContract.primary, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 14),
-
-              // Tabs: Résumé / Points de vue
-              Expanded(
-                child: _DetailsTabs(
-                  viewpoints: viewpoints,
-                  sources: sources,
-                ),
-              ),
-
-              // Footer CTA row
-              const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: FigmaContract.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: border),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                child: Row(
-                  children: [
-                    _SmallActionButton(
-                      icon: Icons.bookmark_border,
-                      label: 'Sauvegarder',
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sauvegardé')));
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    _SmallActionButton(
-                      icon: Icons.share_outlined,
-                      label: 'Partager',
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Partager')));
-                      },
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: FigmaContract.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        elevation: 0,
-                      ),
-                      onPressed: () {
-                        // TODO: open first source url / full article
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ouvrir la source')));
-                      },
-                      child: Text('Voir la source', style: FigmaContract.body().copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        child: _DetailsBody(
+          title: title,
+          summary: summary,
+          viewpoints: viewpoints,
+          sources: sources,
         ),
       ),
     );
   }
 }
 
-/// Tabs widget with summary + viewpoints list + sources
-class _DetailsTabs extends StatefulWidget {
-  final List<_Viewpoint> viewpoints;
-  final List<_Source> sources;
+// ─────────────────────────────────────────────────────────────────────────────
+// Body
+// ─────────────────────────────────────────────────────────────────────────────
 
-  const _DetailsTabs({required this.viewpoints, required this.sources});
+class _DetailsBody extends StatefulWidget {
+  final String title;
+  final String summary;
+  final List<Viewpoint> viewpoints;
+  final List<ArticleSource> sources;
+
+  const _DetailsBody({
+    required this.title,
+    required this.summary,
+    required this.viewpoints,
+    required this.sources,
+  });
 
   @override
-  State<_DetailsTabs> createState() => _DetailsTabsState();
+  State<_DetailsBody> createState() => _DetailsBodyState();
 }
 
-class _DetailsTabsState extends State<_DetailsTabs> with TickerProviderStateMixin {
-  late final TabController _tabController = TabController(length: 2, vsync: this);
+class _DetailsBodyState extends State<_DetailsBody> {
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.88);
+  }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -212,65 +137,155 @@ class _DetailsTabsState extends State<_DetailsTabs> with TickerProviderStateMixi
   Widget build(BuildContext context) {
     final textPrimary = FigmaContract.textPrimary;
     final textSecondary = FigmaContract.textSecondary;
+    final total = widget.viewpoints.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TabBar(
-          controller: _tabController,
-          labelColor: textPrimary,
-          unselectedLabelColor: textSecondary,
-          indicatorColor: FigmaContract.primary,
-          labelStyle: FigmaContract.body().copyWith(fontWeight: FontWeight.w700),
-          unselectedLabelStyle: FigmaContract.body(),
-          tabs: const [
-            Tab(text: 'Résumé'),
-            Tab(text: 'Points de vue'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Résumé: show a longer neutral summary + sources
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              Text(
+                widget.title,
+                style: FigmaContract.h2().copyWith(
+                  color: textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _SummaryCard(summary: widget.summary, sources: widget.sources),
+              const SizedBox(height: 28),
+
+              // Section header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     children: [
-                      // longer neutral summary (we reuse the demo summary for now)
-                      Text(
-                        'Résumé détaillé',
-                        style: FigmaContract.h2().copyWith(fontWeight: FontWeight.w600),
+                      Container(
+                        width: 4,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: FigmaContract.primary,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(width: 10),
                       Text(
-                        widget.viewpoints.map((v) => v.summary).join('\n\n'),
-                        style: FigmaContract.body().copyWith(color: textSecondary, height: 1.45),
+                        'Les perspectives',
+                        style: FigmaContract.h2().copyWith(
+                          color: textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      const SizedBox(height: 18),
-                      Text('Sources', style: FigmaContract.caption().copyWith(color: textSecondary, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      ...widget.sources.map((s) => _SourceRow(source: s)).toList(),
                     ],
                   ),
-                ),
-              ),
-
-              // Points de vue: expand/collapse viewpoints
-              SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Column(
-                    children: widget.viewpoints.map((v) => _ViewpointCard(viewpoint: v)).toList(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: FigmaContract.primaryLight,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${_currentPage + 1} / $total',
+                      style: FigmaContract.caption().copyWith(
+                        color: FigmaContract.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Swipe pour voir chaque point de vue →',
+                style: FigmaContract.caption().copyWith(color: textSecondary),
+              ),
+              const SizedBox(height: 14),
+            ],
+          ),
+        ),
+
+        // Carousel
+        SizedBox(
+          height: 200,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: total,
+            onPageChanged: (i) => setState(() => _currentPage = i),
+            itemBuilder: (context, i) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: i == 0 ? 20 : 8,
+                  right: i == total - 1 ? 20 : 8,
+                ),
+                child: _ViewpointCard(
+                  viewpoint: widget.viewpoints[i],
+                  index: i,
+                  isActive: i == _currentPage,
+                ),
+              );
+            },
+          ),
+        ),
+
+        // Dot indicators
+        const SizedBox(height: 16),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(total, (i) {
+              final active = i == _currentPage;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeInOut,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: active ? 20 : 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  color: active
+                      ? FigmaContract.primary
+                      : FigmaContract.border,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              );
+            }),
+          ),
+        ),
+
+        const Spacer(),
+
+        // Footer CTA
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: FigmaContract.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                elevation: 0,
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Ouvrir la source')),
+                );
+              },
+              child: Text(
+                'Voir la source originale',
+                style: FigmaContract.body().copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ],
@@ -278,72 +293,127 @@ class _DetailsTabsState extends State<_DetailsTabs> with TickerProviderStateMixi
   }
 }
 
-class _Viewpoint {
-  final String label;
-  final String summary;
+// ─────────────────────────────────────────────────────────────────────────────
+// Perspective card
+//
+// Palette "Terres chaudes" — tous les tons viennent de la même famille :
+// ambre · terracotta · ardoise bleue · ocre · sauge · prune poussiéreux.
+// Assez distincts pour se différencier, assez proches pour cohabiter.
+// ─────────────────────────────────────────────────────────────────────────────
 
-  const _Viewpoint({required this.label, required this.summary});
-}
+const List<Color> _perspectiveAccents = [
+  Color(0xFFB8622A), // ambre (= primary)
+  Color(0xFF7A4E3E), // terracotta foncé
+  Color(0xFF4C6B8A), // ardoise bleue
+  Color(0xFF8B6914), // ocre doré
+  Color(0xFF4A6741), // sauge profond
+  Color(0xFF6B4E7A), // prune poussiéreux
+];
 
-class _Source {
-  final String title;
-  final String url;
+class _ViewpointCard extends StatelessWidget {
+  final Viewpoint viewpoint;
+  final int index;
+  final bool isActive;
 
-  const _Source({required this.title, required this.url});
-}
-
-class _ViewpointCard extends StatefulWidget {
-  final _Viewpoint viewpoint;
-
-  const _ViewpointCard({required this.viewpoint});
-
-  @override
-  State<_ViewpointCard> createState() => _ViewpointCardState();
-}
-
-class _ViewpointCardState extends State<_ViewpointCard> {
-  bool _open = false;
+  const _ViewpointCard({
+    required this.viewpoint,
+    required this.index,
+    required this.isActive,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final border = FigmaContract.border;
-    final surface = FigmaContract.surface;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
+    final accent = _perspectiveAccents[index % _perspectiveAccents.length];
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(FigmaContract.rSm),
-        border: Border.all(color: border),
-        boxShadow: FigmaContract.cardShadow,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => setState(() => _open = !_open),
-          borderRadius: BorderRadius.circular(FigmaContract.rSm),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return AnimatedScale(
+      scale: isActive ? 1.0 : 0.95,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeInOut,
+      child: AnimatedOpacity(
+        opacity: isActive ? 1.0 : 0.65,
+        duration: const Duration(milliseconds: 220),
+        child: Container(
+          decoration: BoxDecoration(
+            color: FigmaContract.surface,
+            borderRadius: BorderRadius.circular(FigmaContract.rMd),
+            border: Border.all(
+              color: isActive
+                  ? accent.withOpacity(0.4)
+                  : FigmaContract.border,
+              width: isActive ? 1.5 : 1,
+            ),
+            boxShadow: isActive ? FigmaContract.cardShadow : [],
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.viewpoint.label,
-                        style: FigmaContract.body().copyWith(color: textPrimary, fontWeight: FontWeight.w700),
-                      ),
+                // Left colour bar
+                Container(
+                  width: 5,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
                     ),
-                    Icon(_open ? Icons.expand_less : Icons.expand_more, color: textSecondary),
-                  ],
+                  ),
                 ),
-                if (_open) ...[
-                  const SizedBox(height: 8),
-                  Text(widget.viewpoint.summary, style: FigmaContract.body().copyWith(color: textSecondary, height: 1.45)),
-                ],
+                // Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 26,
+                              height: 26,
+                              decoration: BoxDecoration(
+                                color: accent.withOpacity(0.10),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${index + 1}',
+                                  style: FigmaContract.caption().copyWith(
+                                    color: accent,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                viewpoint.label,
+                                style: FigmaContract.body().copyWith(
+                                  color: FigmaContract.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Text(
+                              viewpoint.summary,
+                              style: FigmaContract.body().copyWith(
+                                color: FigmaContract.textSecondary,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -353,31 +423,99 @@ class _ViewpointCardState extends State<_ViewpointCard> {
   }
 }
 
-class _SourceRow extends StatelessWidget {
-  final _Source source;
+// ─────────────────────────────────────────────────────────────────────────────
+// Summary card
+// ─────────────────────────────────────────────────────────────────────────────
 
+class _SummaryCard extends StatelessWidget {
+  final String summary;
+  final List<ArticleSource> sources;
+
+  const _SummaryCard({required this.summary, required this.sources});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: FigmaContract.primaryLight,
+        borderRadius: BorderRadius.circular(FigmaContract.rMd),
+        border: Border.all(
+          color: FigmaContract.primary.withOpacity(0.18),
+        ),
+        boxShadow: FigmaContract.cardShadow,
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.shield_outlined,
+                  size: 15, color: FigmaContract.primary),
+              const SizedBox(width: 6),
+              Text(
+                'Faits & résumé',
+                style: FigmaContract.caption().copyWith(
+                  color: FigmaContract.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            summary,
+            style: FigmaContract.body().copyWith(
+              color: FigmaContract.textPrimary,
+              height: 1.5,
+            ),
+          ),
+          if (sources.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Divider(
+                color: FigmaContract.primary.withOpacity(0.15), height: 1),
+            const SizedBox(height: 10),
+            ...sources.map((s) => _SourceRow(source: s)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Source row
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SourceRow extends StatelessWidget {
+  final ArticleSource source;
   const _SourceRow({required this.source});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // TODO: open url with url_launcher
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ouvrir: ${source.title}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ouvrir : ${source.title}')));
       },
+      borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
-            Icon(Icons.article_outlined, size: 18, color: FigmaContract.primary),
+            Icon(Icons.article_outlined,
+                size: 16, color: FigmaContract.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 source.title,
-                style: FigmaContract.body().copyWith(color: FigmaContract.textPrimary),
+                style: FigmaContract.body()
+                    .copyWith(color: FigmaContract.textPrimary),
               ),
             ),
-            Icon(Icons.open_in_new, size: 16, color: FigmaContract.textSecondary),
+            Icon(Icons.open_in_new,
+                size: 14, color: FigmaContract.textSecondary),
           ],
         ),
       ),
@@ -385,31 +523,18 @@ class _SourceRow extends StatelessWidget {
   }
 }
 
-class _SmallActionButton extends StatelessWidget {
-  final IconData icon;
+// ─────────────────────────────────────────────────────────────────────────────
+// Data classes
+// ─────────────────────────────────────────────────────────────────────────────
+
+class Viewpoint {
   final String label;
-  final VoidCallback onTap;
+  final String summary;
+  const Viewpoint({required this.label, required this.summary});
+}
 
-  const _SmallActionButton({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-          child: Row(
-            children: [
-              Icon(icon, size: 18, color: FigmaContract.textPrimary),
-              const SizedBox(width: 8),
-              Text(label, style: FigmaContract.caption().copyWith(color: FigmaContract.textPrimary)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+class ArticleSource {
+  final String title;
+  final String url;
+  const ArticleSource({required this.title, required this.url});
 }

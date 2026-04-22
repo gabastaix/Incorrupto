@@ -3,10 +3,7 @@ import '../design/figma_contract.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/explorer/explorer_screen.dart';
 import '../screens/sujets/sujets_screen.dart';
-import '../screens/messages/messages_screen.dart';
 import '../screens/profil/profil_screen.dart';
-
-
 
 class Shell extends StatefulWidget {
   const Shell({super.key});
@@ -18,12 +15,11 @@ class Shell extends StatefulWidget {
 class _ShellState extends State<Shell> {
   int _tabIndex = 0;
 
-  // These are the 5 tabs
+  // 4 tabs now
   late final List<Widget> _tabs = [
-    const HomeScreen(),       // Accueil
-    const ExplorerScreen(),   // Explorer
+    const HomeScreen(),
+    const ExplorerScreen(),
     const SujetsScreen(),
-    const MessagesScreen(),
     const ProfileScreen(),
   ];
 
@@ -31,11 +27,7 @@ class _ShellState extends State<Shell> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: FigmaContract.bg,
-
-      // This shows the current tab screen
       body: _tabs[_tabIndex],
-
-      // Bottom nav always visible here
       bottomNavigationBar: _BottomNavBar(
         index: _tabIndex,
         onChanged: (i) => setState(() => _tabIndex = i),
@@ -44,25 +36,6 @@ class _ShellState extends State<Shell> {
   }
 }
 
-class _PlaceholderTab extends StatelessWidget {
-  final String title;
-  const _PlaceholderTab({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Text(
-          title,
-          style: FigmaContract.h1(),
-        ),
-      ),
-    );
-  }
-}
-
-/// Same bottom nav you already made, copied here so the shell controls it.
-/// Later we can move this into a shared widgets folder.
 class _BottomNavBar extends StatelessWidget {
   final int index;
   final ValueChanged<int> onChanged;
@@ -102,16 +75,10 @@ class _BottomNavBar extends StatelessWidget {
                 onTap: () => onChanged(2),
               ),
               _NavItem(
-                label: 'Messages',
-                icon: Icons.chat_bubble_outline,
-                selected: index == 3,
-                onTap: () => onChanged(3),
-              ),
-              _NavItem(
                 label: 'Profil',
                 icon: Icons.person_outline,
-                selected: index == 4,
-                onTap: () => onChanged(4),
+                selected: index == 3,
+                onTap: () => onChanged(3),
               ),
             ],
           ),

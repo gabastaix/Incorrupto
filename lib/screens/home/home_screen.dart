@@ -1,10 +1,9 @@
 // lib/screens/home/home_screen.dart
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../design/figma_contract.dart';
 import '../../design/screen_map.dart';
 import '../../state/topic_store.dart';
-import '../messages/share.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     final bg = FigmaContract.bg;
@@ -64,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       "VOS SUJETS AUJOURD'HUI",
                       style: FigmaContract.caption().copyWith(
                         letterSpacing: 1.0,
-                        color: textSecondary.withOpacity(0.8),
+                        color: textSecondary.withValues(alpha: 0.8),
                       ),
                     ),
                     Text(
@@ -79,57 +77,61 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SliverToBoxAdapter(
-  child: AnimatedBuilder(
-    animation: TopicStore.instance,
-    builder: (context, _) {
-      final topics = TopicStore.instance.followed;
+              child: AnimatedBuilder(
+                animation: TopicStore.instance,
+                builder: (context, _) {
+                  final topics = TopicStore.instance.followed;
 
-      if (topics.isEmpty) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
-          child: Text(
-            "Ajoute des sujets depuis Explorer ou Sujets pour les voir ici.",
-            style: FigmaContract.body()
-                .copyWith(color: FigmaContract.textSecondary),
-          ),
-        );
-      }
+                  if (topics.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
+                      child: Text(
+                        "Ajoute des sujets depuis Explorer ou Sujets pour les voir ici.",
+                        style: FigmaContract.body()
+                            .copyWith(color: FigmaContract.textSecondary),
+                      ),
+                    );
+                  }
 
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 6, 20, 18),
-        child: Column(
-          children: [
-            for (int index = 0; index < topics.length; index++) ...[
-              _NewsCard(
-                data: _NewsCardData(
-                  category: topics[index].category.toUpperCase(),
-                  cadence: topics[index].cadence,
-                  title: topics[index].title,
-                  excerpt: topics[index].excerpt,
-                ),
-                surface: FigmaContract.surface,
-                border: FigmaContract.border,
-                textPrimary: FigmaContract.textPrimary,
-                textSecondary: FigmaContract.textSecondary,
-                onUnderstand: () {
-                  Navigator.of(context)
-                      .pushNamed(ScreenMap.details);
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 6, 20, 18),
+                    child: Column(
+                      children: [
+                        for (int index = 0; index < topics.length; index++) ...[
+                          _NewsCard(
+                            data: _NewsCardData(
+                              category: topics[index].category.toUpperCase(),
+                              cadence: topics[index].cadence,
+                              title: topics[index].title,
+                              excerpt: topics[index].excerpt,
+                            ),
+                            surface: FigmaContract.surface,
+                            border: FigmaContract.border,
+                            textPrimary: FigmaContract.textPrimary,
+                            textSecondary: FigmaContract.textSecondary,
+                            onUnderstand: () {
+                              Navigator.of(context)
+                                  .pushNamed(ScreenMap.details);
+                            },
+                            // Native share: sends title + excerpt to WhatsApp,
+                            // Instagram, or any app the user has installed.
+                            onShare: () {
+                              Share.share(
+                                '${topics[index].title}\n\n'
+                                '${topics[index].excerpt}',
+                                subject: topics[index].title,
+                              );
+                            },
+                          ),
+                          if (index != topics.length - 1)
+                            const SizedBox(height: 14),
+                        ],
+                      ],
+                    ),
+                  );
                 },
-              onShare: () {
-  showShareArticleModal(context, topics[index].title, topics[index].excerpt);
-},
-
-
               ),
-              if (index != topics.length - 1)
-                const SizedBox(height: 14),
-            ],
-          ],
-        ),
-      );
-    },
-  ),
-),
+            ),
           ],
         ),
       ),
@@ -158,7 +160,7 @@ class _NewsCard extends StatelessWidget {
   final Color textPrimary;
   final Color textSecondary;
   final VoidCallback onUnderstand;
-  final VoidCallback onShare;
+  final VoidCallback onShare; // <-- NEW: triggers the native share sheet
 
   const _NewsCard({
     required this.data,
@@ -223,9 +225,10 @@ class _NewsCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          // CTA row: "Comprendre le débat →" + share button
+          // CTA row: "Comprendre le débat →"  +  Share button
           Row(
             children: [
+              // Left: understand CTA
               Material(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
@@ -233,7 +236,8 @@ class _NewsCard extends StatelessWidget {
                   onTap: onUnderstand,
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 4),
                     child: Row(
                       children: [
                         Text(
@@ -244,16 +248,40 @@ class _NewsCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Icon(Icons.arrow_forward, size: 18, color: textPrimary),
+                        Icon(Icons.arrow_forward,
+                            size: 18, color: textPrimary),
                       ],
                     ),
                   ),
                 ),
               ),
               const Spacer(),
-              _IconCircleButton(
-                icon: Icons.share_outlined,
-                onTap: onShare,
+              // Right: native Share button
+              Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  onTap: onShare,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 8),
+                    child: Row(
+                      children: [
+                        Icon(Icons.share_outlined,
+                            size: 18, color: textSecondary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Partager',
+                          style: FigmaContract.caption().copyWith(
+                            color: textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -283,38 +311,6 @@ class _Chip extends StatelessWidget {
         style: FigmaContract.caption().copyWith(
           color: FigmaContract.textSecondary,
           fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _IconCircleButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _IconCircleButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = (FigmaContract.rSm == 0) ? 12.0 : FigmaContract.rSm;
-
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(radius),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(radius),
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: FigmaContract.bg,
-            borderRadius: BorderRadius.circular(radius),
-            border: Border.all(color: FigmaContract.border),
-          ),
-          alignment: Alignment.center,
-          child: Icon(icon, size: 20, color: FigmaContract.textPrimary),
         ),
       ),
     );
