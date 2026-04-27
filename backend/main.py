@@ -4,23 +4,33 @@ import logging
 from fastapi import FastAPI, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from backend.auth import (
+from .auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     authenticate_user,
     create_access_token,
     get_current_user,
     get_password_hash,
 )
-from backend.database import get_db
-from backend.models.models import User
-from backend.schemas import Token, UserCreate, UserRead
+from .database import get_db
+from .models.models import User
+from .schemas import Token, UserCreate, UserRead
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Incorrupto Backend", version="1.0.0")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(Exception)
 async def all_exception_handler(request: Request, exc: Exception):
@@ -73,3 +83,7 @@ def login(
 @app.get("/me", response_model=UserRead)
 def read_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

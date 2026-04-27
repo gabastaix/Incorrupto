@@ -1,15 +1,37 @@
+#!/usr/bin/env python3
+"""
+Setup script: recreate database and seed with users
+"""
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from .database import SessionLocal
-from .models.models import User
-from .auth import get_password_hash
+# Add backend to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
 
-def seed_users():
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.models.models import Base, User
+from backend.auth import get_password_hash
+
+DATABASE_URL = "sqlite:///./backend/incorrupto.db"
+
+def setup_database():
+    engine = create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+    
+    # Drop and recreate
+    print("Dropping all tables...")
+    Base.metadata.drop_all(bind=engine)
+    
+    print("Creating tables...")
+    Base.metadata.create_all(bind=engine)
+    
+    # Seed users
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = SessionLocal()
+    
     try:
-        # Liste des utilisateurs fictifs
         users_data = [
             {"email": "alice@example.com", "first_name": "Alice", "last_name": "Dupont", "age": 28, "password": "password123", "preferences": {"theme": "dark", "notifications": True}},
             {"email": "bob@example.com", "first_name": "Bob", "last_name": "Martin", "age": 35, "password": "securepass456", "preferences": {"theme": "light", "notifications": False}},
@@ -17,15 +39,8 @@ def seed_users():
             {"email": "diana@example.com", "first_name": "Diana", "last_name": "Sanchez", "age": 31, "password": "testpass000", "preferences": {"theme": "light", "notifications": True}},
             {"email": "eve@example.com", "first_name": "Eve", "last_name": "Rousseau", "age": 26, "password": "randompwd111", "preferences": {"theme": "dark", "notifications": False}},
         ]
-
+        
         for user_data in users_data:
-            # Vérifier si l'utilisateur existe déjà
-            existing_user = db.query(User).filter(User.email == user_data["email"]).first()
-            if existing_user:
-                print(f"Utilisateur {user_data['email']} existe déjà, ignoré.")
-                continue
-
-            # Créer l'utilisateur
             hashed_password = get_password_hash(user_data["password"])
             db_user = User(
                 email=user_data["email"],
@@ -36,15 +51,15 @@ def seed_users():
                 preferences=user_data["preferences"]
             )
             db.add(db_user)
-            print(f"Utilisateur {user_data['email']} ajouté.")
-
+            print(f"✓ {user_data['email']} ({user_data['first_name']} {user_data['last_name']}, {user_data['age']} ans)")
+        
         db.commit()
-        print("Tous les utilisateurs fictifs ont été ajoutés avec succès.")
+        print("\n✅ Database setup complete!")
     except Exception as e:
         db.rollback()
-        print(f"Erreur lors de l'ajout des utilisateurs : {e}")
+        print(f"❌ Error: {e}")
     finally:
         db.close()
 
 if __name__ == "__main__":
-    seed_users()
+    setup_database()

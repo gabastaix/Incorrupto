@@ -2,9 +2,20 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from .database import SessionLocal
-from .models.models import User
-from .auth import get_password_hash
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models.models import Base, User
+from auth import get_password_hash
+
+# Utiliser une base temporaire
+SQLALCHEMY_DATABASE_URL = "sqlite:///./incorrupto_temp.db"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base.metadata.create_all(bind=engine)
 
 def seed_users():
     db = SessionLocal()

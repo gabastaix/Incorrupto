@@ -6,7 +6,10 @@ import '../screens/sujets/sujets_screen.dart';
 import '../screens/profil/profil_screen.dart';
 
 class Shell extends StatefulWidget {
-  const Shell({super.key});
+  final VoidCallback onLogout;
+  final String userName;
+
+  const Shell({super.key, required this.onLogout, required this.userName});
 
   @override
   State<Shell> createState() => _ShellState();
@@ -17,10 +20,10 @@ class _ShellState extends State<Shell> {
 
   // 4 tabs now
   late final List<Widget> _tabs = [
-    const HomeScreen(),
+    HomeScreen(userName: widget.userName),
     const ExplorerScreen(),
     const SujetsScreen(),
-    const ProfileScreen(),
+    ProfileScreen(onLogout: widget.onLogout, userName: widget.userName),
   ];
 
   @override

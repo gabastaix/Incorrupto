@@ -6,7 +6,9 @@ import '../../design/screen_map.dart';
 import '../../state/topic_store.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String userName;
+
+  const HomeScreen({super.key, required this.userName});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -33,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Bonjour Léa',
+                      'Bonjour ${widget.userName.isEmpty ? 'ami' : widget.userName}',
                       style: FigmaContract.h1().copyWith(color: textPrimary),
                     ),
                     const SizedBox(height: 6),

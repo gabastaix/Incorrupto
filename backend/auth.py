@@ -7,9 +7,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
-from backend.models.models import User
-from backend.schemas import TokenData
+from .database import get_db
+from .models.models import User
+from .schemas import TokenData
 
 SECRET_KEY = "change_this_to_a_secure_random_string"
 ALGORITHM = "HS256"

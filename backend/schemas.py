@@ -3,6 +3,9 @@ from pydantic import BaseModel, EmailStr, constr, validator
 
 class UserBase(BaseModel):
     email: EmailStr
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = None
     preferences: Optional[dict] = None
 
 class UserCreate(UserBase):

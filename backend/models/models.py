@@ -11,6 +11,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
+    first_name = Column(String, nullable=True)  # prénom
+    last_name = Column(String, nullable=True)   # nom
+    age = Column(Integer, nullable=True)         # âge
     preferences = Column(JSON)  # thèmes choisis
 
 class Topic(Base):
