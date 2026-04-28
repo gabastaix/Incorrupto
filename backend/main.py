@@ -15,7 +15,7 @@ from .auth import (
     get_password_hash,
 )
 from .database import get_db
-from .models.models import User
+from .models.models import User, Topic, Article
 from .schemas import Token, UserCreate, UserRead
 
 logging.basicConfig(level=logging.INFO)
@@ -83,6 +83,40 @@ def login(
 @app.get("/me", response_model=UserRead)
 def read_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+# ── Topics ────────────────────────────────────────────────────────────
+
+@app.get("/topics")
+def get_topics(db: Session = Depends(get_db)):
+    topics = db.query(Topic).all()
+    return [
+        {
+            "id": t.id,
+            "name": t.name,
+            "category": t.category,
+            "excerpt": t.excerpt,
+        }
+        for t in topics
+    ]
+
+
+@app.get("/topics/{topic_id}/articles")
+def get_topic_articles(topic_id: int, db: Session = Depends(get_db)):
+    articles = db.query(Article).filter(
+        Article.topic_ids.contains([topic_id])
+    ).order_by(Article.date.desc()).all()
+
+    return [
+        {
+            "id": a.id,
+            "title": a.title,
+            "content": a.content,
+            "source": a.source,
+            "url": a.url,
+            "date": str(a.date),
+        }
+        for a in articles
+    ]
 
 if __name__ == "__main__":
     import uvicorn
