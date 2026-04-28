@@ -42,12 +42,14 @@ class UserTopic(Base):
 class Article(Base):
     __tablename__ = 'articles'
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    content = Column(Text, nullable=False)
-    source = Column(String, nullable=False)  # Le Monde, Figaro…
-    date = Column(DateTime, default=datetime.datetime.utcnow)
-    category = Column(String)
+    id        = Column(Integer, primary_key=True, index=True)
+    title     = Column(String, nullable=False)
+    content   = Column(Text, nullable=True)
+    source    = Column(String, nullable=False)
+    url       = Column(String, unique=True, nullable=True)   # ← NOUVEAU
+    date      = Column(DateTime, nullable=True)
+    category  = Column(String, nullable=True)
+    topic_ids = Column(JSON, nullable=True)                  # ← NOUVEAU
 
 class Analysis(Base):
     __tablename__ = 'analyses'
