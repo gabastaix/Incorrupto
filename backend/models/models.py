@@ -15,12 +15,29 @@ class User(Base):
     last_name = Column(String, nullable=True)   # nom
     age = Column(Integer, nullable=True)         # âge
     preferences = Column(JSON)  # thèmes choisis
+    followed_topics = relationship("UserTopic", back_populates="user")
 
 class Topic(Base):
     __tablename__ = 'topics'
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)  # ex: Trump, écologie
+    id       = Column(Integer, primary_key=True, index=True)
+    name     = Column(String, nullable=False)        # ex: "Nucléaire français"
+    category = Column(String, nullable=False)        # ex: "Énergie"
+    keywords = Column(JSON, nullable=False)          # ex: ["nucléaire", "EPR", "EDF"]
+    excerpt  = Column(String, nullable=True)         # courte description affichée dans l'app
+
+    user_topics = relationship("UserTopic", back_populates="topic")
+
+
+class UserTopic(Base):
+    __tablename__ = 'user_topics'
+
+    id       = Column(Integer, primary_key=True, index=True)
+    user_id  = Column(Integer, ForeignKey('users.id'), nullable=False)
+    topic_id = Column(Integer, ForeignKey('topics.id'), nullable=False)
+
+    user  = relationship("User", back_populates="followed_topics")
+    topic = relationship("Topic", back_populates="user_topics")
 
 class Article(Base):
     __tablename__ = 'articles'
