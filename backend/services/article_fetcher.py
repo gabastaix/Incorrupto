@@ -6,6 +6,7 @@ from database import SessionLocal
 from models.models import Article, Topic
 from services.rss_fetcher import fetch_all_articles
 from services.categorizer import categorize_all
+from services.text_processor import process_all
 
 
 def run():
@@ -18,10 +19,13 @@ def run():
         # 2. Fetcher les articles RSS
         articles = fetch_all_articles()
 
-        # 3. Catégoriser les articles
+        # 3. Nettoyage 
+        articles = process_all(articles)
+
+        # 4. Catégoriser les articles
         categorized = categorize_all(articles, topics)
 
-        # 4. Sauvegarder en BDD
+        # 5. Sauvegarder en BDD
         added = 0
         skipped = 0
 
@@ -37,6 +41,7 @@ def run():
             article = Article(
                 title=article_data["title"],
                 content=article_data["content"],
+                cleaned_content=article_data.get("cleaned_content", ""),  # ← NOUVEAU
                 source=article_data["source"],
                 url=article_data["url"],
                 date=article_data["date"],

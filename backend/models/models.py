@@ -50,6 +50,7 @@ class Article(Base):
     date      = Column(DateTime, nullable=True)
     category  = Column(String, nullable=True)
     topic_ids = Column(JSON, nullable=True)                  # ← NOUVEAU
+    cleaned_content = Column(Text, nullable=True)
 
 class Analysis(Base):
     __tablename__ = 'analyses'
