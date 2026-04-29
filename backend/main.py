@@ -15,7 +15,7 @@ from .auth import (
     get_password_hash,
 )
 from .database import get_db
-from .models.models import User, Topic, Article
+from .models.models import User, Topic, Article, Analysis
 from .schemas import Token, UserCreate, UserRead
 
 logging.basicConfig(level=logging.INFO)
@@ -117,6 +117,25 @@ def get_topic_articles(topic_id: int, db: Session = Depends(get_db)):
         }
         for a in articles
     ]
+
+@app.get("/articles/{article_id}/analysis")
+def get_article_analysis(article_id: int, db: Session = Depends(get_db)):
+    article = db.query(Article).filter(Article.id == article_id).first()
+    if not article:
+        raise HTTPException(status_code=404, detail="Article introuvable")
+
+    analysis = db.query(Analysis).filter(Analysis.article_id == article_id).first()
+
+    return {
+        "article_id": article_id,
+        "title": article.title,
+        "source": article.source,
+        "date": str(article.date),
+        "url": article.url,
+        "summary": analysis.summary if analysis else None,
+        "perspectives": analysis.perspectives if analysis else {},
+        "has_analysis": analysis is not None,
+    }
 
 if __name__ == "__main__":
     import uvicorn
