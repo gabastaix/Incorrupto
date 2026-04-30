@@ -130,10 +130,12 @@ String _selectedChip = 'Pour vous';
 
   @override
   Widget build(BuildContext context) {
-    final bg = FigmaContract.bg;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
     final border = FigmaContract.border;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
+    final textPrimary = Theme.of(context).colorScheme.onSurface;
+    final textSecondary = Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary;
 
     return Scaffold(
       backgroundColor: bg,
@@ -151,7 +153,7 @@ String _selectedChip = 'Pour vous';
               // Search bar
               Container(
                 decoration: BoxDecoration(
-                  color: FigmaContract.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(FigmaContract.rMd),
                   border: Border.all(color: border),
                 ),
@@ -199,7 +201,7 @@ String _selectedChip = 'Pour vous';
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: selected ? FigmaContract.primary.withOpacity(0.12) : FigmaContract.surface,
+                          color: selected ? FigmaContract.primary.withOpacity(0.12) : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: selected ? FigmaContract.primary : border),
                         ),
@@ -284,9 +286,11 @@ class _ExplorerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = TopicStore.instance;
     final border = FigmaContract.border;
-    final surface = FigmaContract.surface;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
+    final surface = Theme.of(context).colorScheme.surface;
+    final textPrimary = Theme.of(context).colorScheme.onSurface;
+    final textSecondary = Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary;
 
     return AnimatedBuilder(
       animation: store,
@@ -337,7 +341,9 @@ class _ExplorerCard extends StatelessWidget {
                       followed ? 'Ajouté' : 'Ajouter',
                       style: FigmaContract.body().copyWith(
                         color: followed
-                            ? FigmaContract.textSecondary
+                            ? Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary
                             : FigmaContract.primary,
                         fontWeight: FontWeight.w700,
                       ),

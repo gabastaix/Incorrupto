@@ -41,10 +41,12 @@ class _SujetsScreenState extends State<SujetsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bg = FigmaContract.bg;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
     final border = FigmaContract.border;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
+    final textPrimary = Theme.of(context).colorScheme.onSurface;
+    final textSecondary = Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary;
 
     return Scaffold(
       backgroundColor: bg,
@@ -66,7 +68,7 @@ class _SujetsScreenState extends State<SujetsScreen> {
               // Input + cadence
               Container(
                 decoration: BoxDecoration(
-                  color: FigmaContract.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(FigmaContract.rMd),
                   border: Border.all(color: border),
                 ),
@@ -166,9 +168,11 @@ class _FollowedTopicRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final border = FigmaContract.border;
-    final surface = FigmaContract.surface;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
+    final surface = Theme.of(context).colorScheme.surface;
+    final textPrimary = Theme.of(context).colorScheme.onSurface;
+    final textSecondary = Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary;
 
     return Container(
       decoration: BoxDecoration(
@@ -221,14 +225,16 @@ class _CadenceChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: FigmaContract.bg,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(radius),
           border: Border.all(color: FigmaContract.border),
         ),
         child: Text(
           topic.cadence,
           style: FigmaContract.caption().copyWith(
-            color: FigmaContract.textSecondary,
+            color: Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),

@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import '../design/figma_contract.dart';
+import '../services/locale_service.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/explorer/explorer_screen.dart';
 import '../screens/sujets/sujets_screen.dart';
 import '../screens/profil/profil_screen.dart';
+import '../services/app_settings_service.dart';
 
 class Shell extends StatefulWidget {
   final VoidCallback onLogout;
   final String userName;
+  final LocaleService localeService;
+  final AppSettingsService appSettingsService;  // ← ajouté
 
-  const Shell({super.key, required this.onLogout, required this.userName});
+  const Shell({
+    super.key,
+    required this.onLogout,
+    required this.userName,
+    required this.localeService,
+    required this.appSettingsService, // ← ajouté
+  });
 
   @override
   State<Shell> createState() => _ShellState();
@@ -18,12 +28,18 @@ class Shell extends StatefulWidget {
 class _ShellState extends State<Shell> {
   int _tabIndex = 0;
 
-  // 4 tabs now
-  late final List<Widget> _tabs = [
+  // On ne peut plus utiliser `late final` ici car on a besoin
+  // de reconstruire quand la langue change — on passe par un getter
+  List<Widget> get _tabs => [
     HomeScreen(userName: widget.userName),
     const ExplorerScreen(),
     const SujetsScreen(),
-    ProfileScreen(onLogout: widget.onLogout, userName: widget.userName),
+    ProfileScreen(
+  onLogout: widget.onLogout,
+  userName: widget.userName,
+  localeService: widget.localeService,
+  appSettingsService: widget.appSettingsService,
+  ),
   ];
 
   @override

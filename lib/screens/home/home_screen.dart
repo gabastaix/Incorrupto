@@ -17,10 +17,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final bg = FigmaContract.bg;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
     final border = FigmaContract.border;
-    final textPrimary = FigmaContract.textPrimary;
-    final textSecondary = FigmaContract.textSecondary;
+    final textPrimary = Theme.of(context).colorScheme.onSurface;
+    final textSecondary = Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary;
 
     return Scaffold(
       backgroundColor: bg,
@@ -90,7 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         "Ajoute des sujets depuis Explorer ou Sujets pour les voir ici.",
                         style: FigmaContract.body()
-                            .copyWith(color: FigmaContract.textSecondary),
+                            .copyWith(color: Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary),
                       ),
                     );
                   }
@@ -107,10 +111,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: topics[index].title,
                               excerpt: topics[index].excerpt,
                             ),
-                            surface: FigmaContract.surface,
+                            surface: Theme.of(context).colorScheme.surface,
                             border: FigmaContract.border,
-                            textPrimary: FigmaContract.textPrimary,
-                            textSecondary: FigmaContract.textSecondary,
+                            textPrimary: Theme.of(context).colorScheme.onSurface,
+                            textSecondary: Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary,
                             onUnderstand: () {
                               Navigator.of(context)
                                   .pushNamed(ScreenMap.details);
@@ -304,14 +310,16 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: FigmaContract.bg,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(color: FigmaContract.border),
       ),
       child: Text(
         text,
         style: FigmaContract.caption().copyWith(
-          color: FigmaContract.textSecondary,
+          color: Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFC6B8A8)
+    : FigmaContract.textSecondary,
           fontWeight: FontWeight.w600,
         ),
       ),
